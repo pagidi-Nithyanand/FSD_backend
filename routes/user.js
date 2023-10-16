@@ -1,8 +1,12 @@
 const express = require('express')
-const unique = require('unique-username-generator')
+const unique = require('unique-names-generator')
 const router = express.Router()
-router.post('/getGeneratedName', async (res) => {
-  const username = unique.generateUsername()
+router.post('/getGeneratedName', async (req, res) => {
+  const username = unique.uniqueNamesGenerator({
+    dictionaries: [unique.adjectives,unique.starWars],
+    style: 'capital',
+    separator: ' '
+  })
   try {
     res.json(username)
     console.log(username)
@@ -10,4 +14,4 @@ router.post('/getGeneratedName', async (res) => {
     // TODO: log error to log file
   }
 })
-module.exports = router
+module.exports = router;
