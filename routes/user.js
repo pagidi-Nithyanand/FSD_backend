@@ -14,4 +14,4 @@ router.post('/getGeneratedName', async (req, res) => {
     // TODO: log error to log file
   }
 })
-module.exports = router; 
+module.exports = router;
