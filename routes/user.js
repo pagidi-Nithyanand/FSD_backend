@@ -2,16 +2,18 @@ const express = require('express')
 const unique = require('unique-names-generator')
 const router = express.Router()
 router.post('/getGeneratedName', async (req, res) => {
-  const username = unique.uniqueNamesGenerator({
-    dictionaries: [unique.adjectives,unique.starWars],
+  let username = unique.uniqueNamesGenerator({
+    dictionaries: [unique.adjectives, unique.starWars],
     style: 'capital',
-    separator: ' '
+    separator: ''
   })
+  username = username.concat(Math.floor(Math.random() * 100000) + 1000)
+  username = username.split(' ').join('')
   try {
     res.json(username)
-    console.log(username)
+    // console.log(username)
   } catch (error) {
-    // TODO: log error to log file
+    res.send(error)
   }
 })
-module.exports = router;
+module.exports = router
