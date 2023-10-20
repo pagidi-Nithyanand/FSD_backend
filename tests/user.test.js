@@ -1,5 +1,5 @@
 const request = require('supertest')
-const server = require('../app')
+const server = require('../src/app')
 
 describe('POST /user/getGeneratedName', () => {
   it('should return 200', async () => {
