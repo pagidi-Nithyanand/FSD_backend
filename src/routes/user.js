@@ -11,7 +11,6 @@ router.post('/getGeneratedName', async (req, res) => {
   username = username.split(' ').join('')
   try {
     res.json(username)
-    // console.log(username)
   } catch (error) {
     res.send(error)
   }
