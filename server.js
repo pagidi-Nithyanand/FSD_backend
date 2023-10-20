@@ -1,6 +1,2 @@
-const express = require('express')
-const user = require('./routes/user')
-const app = express()
+const app = require('./app')
 app.listen(3000, () => console.log('Server running on port 3000!'))
-app.use('/user/', user)
-app.use('/', user)
