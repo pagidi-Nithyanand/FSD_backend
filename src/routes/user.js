@@ -9,10 +9,6 @@ router.post('/getGeneratedName', async (req, res) => {
   })
   username = username.concat(Math.floor(Math.random() * 100000) + 1000)
   username = username.split(' ').join('')
-  try {
-    res.json(username)
-  } catch (error) {
-    res.send(error)
-  }
+  res.json(username)
 })
 module.exports = router
