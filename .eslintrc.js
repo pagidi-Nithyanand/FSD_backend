@@ -5,7 +5,7 @@ module.exports = {
     es2021: true,
     jest: true
   },
-  extends: ['standard', 'plugin:security/recommended'],
+  extends: ['standard', 'plugin:security/recommended', 'prettier'],
   overrides: [
     {
       env: {
