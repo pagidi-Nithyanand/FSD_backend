@@ -4,7 +4,7 @@ const Video = require('../models/VideoMetaModel')
 const db = require('../db')
 const multer = require('multer')
 const storage = multer.memoryStorage() // Store the file in memory as a Buffer
-const upload = multer({ storage: storage })
+const upload = multer({ storage })
 router.post('/upload', upload.single('video'), async (req, res) => {
   try {
     const newVideo = new Video({
