@@ -11,37 +11,37 @@ router.post('/getGeneratedName', async (req, res) => {
     console.log('IN signup')
   })
   while (true) {
-    let username = unique.uniqueNamesGenerator({
+    let name = unique.uniqueNamesGenerator({
       dictionaries: [unique.adjectives, unique.starWars],
       style: 'capital',
       separator: ''
     })
-    username = username.concat(Math.floor(Math.random() * 10000) + 100)
-    username = username.split(' ').join('')
-    const existingUser = await User.findOne({ username })
-    if (username.length < 32 && username.length > 7 && !existingUser) {
-      username = username.replace('-', '')
+    name = name.concat(Math.floor(Math.random() * 10000) + 100)
+    name = name.split(' ').join('')
+    const existingUser = await User.findOne({ username: name })
+    if (name.length < 32 && name.length > 7 && !existingUser) {
+      name = name.replace('-', '')
       try {
-        res.json(username)
+        res.json(name)
       } catch (error) {
         res.send(error)
+        db.close()
       }
       break
     }
   }
-  db.close()
 })
 router.post('/Signup', upload.single('image'), async (req, res) => {
   // TODO: signup api
   db.once('open', () => {
     console.log('IN signup')
   })
-  const { username, email, hash, salt } = req.body
-  const existingUser = await User.findOne({ username })
+  const { name, email, hash, salt } = req.body
+  const existingUser = await User.findOne({ username: name })
   if (!existingUser) {
     try {
       const userd = new User({
-        username,
+        name,
         email,
         profilepic: req.file.buffer,
         hash,
@@ -51,29 +51,22 @@ router.post('/Signup', upload.single('image'), async (req, res) => {
       res.json(savedUser)
     } catch (error) {
       res.send(error)
+      db.close()
     }
   } else {
     res.json('Username exists')
   }
 })
-router.post('/View', async (req, res) => {
+router.get('/View', async (req, res) => {
   // TODO: signup api
   db.once('open', () => {
     console.log('Connected to MongoDB')
   })
-  const { username, email, hash, salt } = req.body
-  const existingUser = await User.findOne({ username })
-  if (!existingUser) {
+  const name = req.query.username
+  const existingUser = await User.findOne({ username: name })
+  if (existingUser) {
     try {
-      const userd = new User({
-        username,
-        email,
-        profilepic: req.file.buffer,
-        hash,
-        salt
-      })
-      const savedUser = await userd.save()
-      res.json(savedUser)
+      res.json(existingUser)
     } catch (error) {
       res.send(error)
     }
