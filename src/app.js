@@ -6,5 +6,5 @@ const app = express()
 app.use(bodyParser.json())
 app.use('/user/', user)
 app.use('/', user)
-app.use('/Video', video)
+app.use('/video', video)
 module.exports = app
