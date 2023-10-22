@@ -18,7 +18,7 @@ describe('POST /user/getGeneratedName', () => {
       expect(username.length >= 8).toBe(true)
     }
   })
-  it.skip('should return a username with atmost 32 characters', async () => {
+  it('should return a username with atmost 32 characters', async () => {
     for (let index = 0; index < 50; index++) {
       const response = await request(server).post('/user/getGeneratedName')
       const username = response.body.toString()
