@@ -1,8 +1,12 @@
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://127.0.0.1/Minor', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+require('dotenv').config()
+const MONGO_URL = process.env.MONGO_URL
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+}
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 db.once('open', () => {
