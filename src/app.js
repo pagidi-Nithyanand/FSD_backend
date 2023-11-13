@@ -1,10 +1,12 @@
 const express = require('express')
 const user = require('./routes/user')
+const comment = require('./routes/comment')
 const video = require('./routes/video')
 const bodyParser = require('body-parser')
 const app = express()
 app.use(bodyParser.json())
 app.use('/user/', user)
 app.use('/', user)
+app.use('/comment', comment)
 app.use('/video', video)
 module.exports = app

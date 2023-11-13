@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
-const videoMetadataSchema = new mongoose.Schema({
-  // TODO: Need to change schema later
+const videodataSchema = new mongoose.Schema({
   Userid: Number,
   title: String,
   thumbnail: Buffer,
@@ -10,4 +9,4 @@ const videoMetadataSchema = new mongoose.Schema({
   upvotes: Number,
   downvotes: Number
 })
-module.exports = mongoose.model('VideoMetadata', videoMetadataSchema)
+module.exports = mongoose.model('Videodata', videodataSchema)
