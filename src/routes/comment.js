@@ -5,7 +5,10 @@ const router = express.Router()
 router.post('/post', async (req, res) => {
   try {
     await dbon()
-    const existingComment = await Comments.findOne({ userid: req.body.userid })
+    const existingComment = await Comments.findOne({
+      userid: req.body.userid,
+      videoid: req.body.videoid
+    })
     if (!existingComment) {
       const newcomment = new Comments({
         userid: req.body.userid,
@@ -18,13 +21,12 @@ router.post('/post', async (req, res) => {
       })
       await newcomment.save()
       res.status(201).json({ boolean: true })
-      dboff()
     } else {
       res.status(201).json({ boolean: false })
-      dboff()
     }
   } catch (error) {
     res.status(500).json(error)
+  } finally {
     dboff()
   }
 })
