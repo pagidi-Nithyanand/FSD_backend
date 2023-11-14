@@ -34,7 +34,7 @@ router.get('/view', async (req, res) => {
   try {
     await dbon()
     const existingComment = await Comments.find({ videoid: req.query.videoid })
-    if (existingComment.length == 0) {
+    if (existingComment.length === 0) {
       res.status(201).json({ comments: 'No Comments' })
     } else {
       res.status(201).json({ comments: existingComment })

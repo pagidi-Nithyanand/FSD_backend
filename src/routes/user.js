@@ -57,9 +57,6 @@ router.post('/Signup', upload.single('image'), async (req, res) => {
 })
 router.get('/View', async (req, res) => {
   // TODO: signup api
-  db.once('open', () => {
-    console.log('Connected to MongoDB')
-  })
   const name = req.query.username
   const existingUser = await User.findOne({ username: name })
   if (existingUser) {
