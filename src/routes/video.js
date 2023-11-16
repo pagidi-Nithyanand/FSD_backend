@@ -10,27 +10,29 @@ router.post('/upload', upload.any(), async (req, res) => {
   try {
     await dbon()
     const newVideo = new Video({
+      userid: req.body.userid,
       title: req.body.title,
       data: req.files[0].buffer,
       description: req.body.description,
-      creator_id: req.body.creator_id,
+      thumbnail: req.files[1].buffer,
+      timestamp: new Date(),
+      views: 0,
       upvotes: 0,
-      downvotes: 0,
-      thumbnail: req.files[1].buffer
+      downvotes: 0
     })
     await newVideo.save()
     res.status(201).json({ message: 'Video uploaded successfully' })
-    dboff()
   } catch (error) {
     res.status(500).json(error)
+  } finally {
     dboff()
   }
 })
-router.get('/view', async (req, res) => {
+router.get('/stream', async (req, res) => {
   try {
     await dbon()
-    const videoId = req.query.creator_id
-    const video = await Video.findOne({ creator_id: videoId })
+    const videoId = req.query.videoid
+    const video = await Video.findOne({ _id: videoId })
     if (!video) {
       return res.status(404).json({ error: 'Video not found' })
     }

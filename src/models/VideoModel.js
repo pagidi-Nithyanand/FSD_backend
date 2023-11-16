@@ -3,8 +3,9 @@ const videodataSchema = new mongoose.Schema({
   Userid: Number,
   title: String,
   thumbnail: Buffer,
-  Timestamp: Date,
-  Views: Number,
+  timestamp: Date,
+  description: String,
+  views: Number,
   data: Buffer,
   upvotes: Number,
   downvotes: Number
