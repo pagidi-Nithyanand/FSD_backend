@@ -13,6 +13,7 @@ router.post('/post', async (req, res) => {
       const newcomment = new Comments({
         userid: req.body.userid,
         videoid: req.body.videoid,
+        commentid: req.body.userid + req.body.videoid,
         comment_title: req.body.comment_title,
         comment: req.body.comment,
         Upvotes: 0,
