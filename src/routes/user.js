@@ -7,26 +7,37 @@ const storages = multer.memoryStorage() // Store the file in memory as a Buffer
 const upload = multer({ storage: storages })
 const router = express.Router()
 router.post('/getGeneratedName', async (req, res) => {
+  const names = [
+    unique.adjectives,
+    unique.animals,
+    unique.colors,
+    unique.languages,
+    unique.names,
+    unique.starWars
+  ]
+  const limit = 100
   try {
     await dbon()
-    while (true) {
-      let name = unique.uniqueNamesGenerator({
-        dictionaries: [unique.adjectives, unique.starWars],
-        style: 'capital',
-        separator: ''
-      })
-      name = name.concat(Math.floor(Math.random() * 10000) + 100)
-      name = name.split(' ').join('')
-      name = name.replace('-', '')
-      const existingUser = await User.findOne({ username: name })
-      if (name.length < 32 && name.length > 7 && !existingUser) {
-        res.json({ username: name })
-        dboff()
-        break
+    for (let i = 2; i < names.length; i++) {
+      let exit=false;
+      for (let count = 0; count < limit; count++) {
+        let name = unique.uniqueNamesGenerator({
+          dictionaries: names,
+          style: 'capital',
+          separator: '',
+          length: i
+        })
+        name = name.concat(Math.floor(Math.random() * 10000) + 100)
+        const existingUser = await User.findOne({ username: name })
+        if (name.length < 32 && name.length > 7 && !existingUser) {
+          res.json({ username: name })
+          exit=true;
+        }
       }
+      if (exit) break;
     }
   } catch (error) {
-    res.send(error)
+
     dboff()
   }
 })
