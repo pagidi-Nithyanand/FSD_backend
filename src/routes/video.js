@@ -31,8 +31,9 @@ router.post('/upload', upload.any(), async (req, res) => {
 router.get('/stream', async (req, res) => {
   try {
     await dbon()
-    const videoId = req.query.videoid
-    const video = await Video.findOne({ _id: videoId })
+    const title1 = req.query.title
+    const video = await Video.findOne({ title: title1 })
+    console.log(video)
     if (!video) {
       return res.status(404).json({ error: 'Video not found' })
     }
@@ -40,6 +41,24 @@ router.get('/stream', async (req, res) => {
     res.send(video.data)
     // res.setHeader('Content-Type', 'image/png')//  For Image
     // res.send(video.thumbnail)
+  } catch (error) {
+    res.status(500).json(error)
+  } finally {
+    dboff()
+  }
+})
+router.get('/meta', async (req, res) => {
+  try {
+    await dbon()
+    const videoId = req.query.videoid
+    const videometa = await Video.findOne(
+      { _id: videoId },
+      { data: 0 }
+    ).pretty()
+    if (!videometa) {
+      return res.status(404).json({ error: 'Video meta not found' })
+    }
+    res.status(500).json(videometa)
   } catch (error) {
     res.status(500).json(error)
   } finally {
