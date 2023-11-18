@@ -1,12 +1,11 @@
 const mongoose = require('mongoose')
 const videoMetadataSchema = new mongoose.Schema({
-  // TODO: Need to change schema later
-  Userid: Number,
+  userid: String,
+  videoid: String,
   title: String,
   thumbnail: Buffer,
-  Timestamp: Date,
-  Views: Number,
-  data: Buffer,
+  timestamp: Date,
+  views: Number,
   upvotes: Number,
   downvotes: Number
 })
