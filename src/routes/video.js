@@ -3,6 +3,7 @@ const router = express.Router()
 const Video = require('../models/VideoModel')
 const { dbon, dboff } = require('../db')
 const multer = require('multer')
+const { GridFSBucket } = require('mongodb')
 // const bodyParser = require('body-parser')
 const storages = multer.memoryStorage() // Store the file in memory as a Buffer
 const upload = multer({ storage: storages })
@@ -15,6 +16,7 @@ router.post('/upload', upload.any(), async (req, res) => {
       data: req.files[0].buffer,
       description: req.body.description,
       thumbnail: req.files[1].buffer,
+      video_tags: req.body.video_tags,
       timestamp: new Date(),
       views: 0,
       upvotes: 0,
@@ -61,6 +63,29 @@ router.get('/meta', async (req, res) => {
     res.status(500).json(videometa)
   } catch (error) {
     res.status(500).json(error)
+  } finally {
+    dboff()
+  }
+})
+router.get('/gfs', async (req, res) => {
+  try {
+    const db = await dbon()
+    const bucket = new GridFSBucket(db)
+    const title1 = req.query.title
+    // Find the file using GridFS
+    const videoStream = bucket.openDownloadStream({ title: title1 })
+    videoStream.on('data', (chunk) => {
+      res.write(chunk)
+    })
+    videoStream.on('end', () => {
+      res.end()
+    })
+    videoStream.on('error', (error) => {
+      res.status(500).json({ error: 'Error streaming video', details: error })
+    })
+  } catch (error1) {
+    console.log(error1)
+    res.status(500).json({ error: 'Internal Server Error', details: error1 })
   } finally {
     dboff()
   }
