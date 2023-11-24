@@ -4,9 +4,12 @@ const videoMetadataSchema = new mongoose.Schema({
   videoid: String,
   title: String,
   thumbnail: Buffer,
+  description: String,
   timestamp: Date,
   views: Number,
   upvotes: Number,
-  downvotes: Number
+  downvotes: Number,
+  video_tags: [String]
 })
+videoMetadataSchema.index({ title: 'text', description: 'text' })
 module.exports = mongoose.model('VideoMetadata', videoMetadataSchema)
