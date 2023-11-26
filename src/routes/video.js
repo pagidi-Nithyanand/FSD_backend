@@ -1,25 +1,37 @@
 const express = require('express')
+const cors = require('cors')
 const router = express.Router()
 const Videodata = require('../models/VideoModel')
 const Videometa = require('../models/VideoMetaModel')
 const { dbon, dboff } = require('../db')
 const multer = require('multer')
-const { GridFSBucket } = require('mongodb')
-const { default: mongoose } = require('mongoose')
+// const { GridFSBucket } = require('mongodb')
+// const { default: mongoose } = require('mongoose')
+router.use(cors())
 // const bodyParser = require('body-parser')
 const storages = multer.memoryStorage() // Store the file in memory as a Buffer
 const upload = multer({ storage: storages })
 router.post('/upload', upload.any(), async (req, res) => {
+  console.log(req.body)
+  console.log(req.files)
+  // console.log(req.body.files)
   try {
     await dbon()
-    const newvideo = new Videodata({
-      userid: req.body.userid,
-      data: req.files[0].buffer
-    })
+    if (req.body.videoSource === 'local') {
+      newvideo = await new Videodata({
+        userid: req.body.data1,
+        data: req.files[0].buffer
+      })
+    } else {
+      newvideo = await new Videodata({
+        userid: req.body.data._id,
+        url: req.body.url
+      })
+    }
     await newvideo.save()
     const temp = await Videodata.findOne({ data: req.files[0].buffer })
     const videometa = new Videometa({
-      userid: req.body.userid,
+      userid: req.body.data1,
       videoid: temp._id,
       title: req.body.title,
       description: req.body.description,
@@ -28,9 +40,11 @@ router.post('/upload', upload.any(), async (req, res) => {
       timestamp: new Date(),
       views: 0,
       upvotes: 0,
-      downvotes: 0
+      downvotes: 0,
+      type: req.body.videoSource
     })
     await videometa.save()
+    console.log('video uploaded successfully')
     res.status(201).json({ message: 'Video uploaded successfully' })
   } catch (error) {
     console.log(error)
@@ -75,6 +89,28 @@ router.get('/meta', async (req, res) => {
     dboff()
   }
 })
+router.get('/allmeta', async (req, res) => {
+  console.log(2)
+  try {
+    await dbon()
+
+    // Increase the timeout for the MongoDB operation to 30 seconds
+    const videometa = await Videometa.find({}).maxTimeMS(30000)
+    console.log(videometa)
+
+    if (!videometa || videometa.length === 0) {
+      return res.status(404).json({ error: 'Video meta not found' })
+    }
+
+    res.status(200).json(videometa)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: 'Internal Server Error' })
+  } finally {
+    // dboff()
+  }
+})
+
 // router.get('/gfs', async (req, res) => {
 //   try {
 //     const db = await dbon()

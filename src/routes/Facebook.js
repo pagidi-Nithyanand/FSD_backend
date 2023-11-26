@@ -1,65 +1,83 @@
+const SocialModel = require('../models/UserModel')
+const jwt = require('jsonwebtoken')
 const express = require('express')
-const passport = require('passport')
-var SocialModel = require('../models/UserModel')
-var axios = require('axios')
-var jwt = require('jsonwebtoken')
-app = express()
+const cors = require('cors')
+const { dbon, dboff } = require('../db')
+const app = express()
+
+// Enable CORS for all routes
+app.use(cors())
+
 app.post('/setfbtoken', async (req, res) => {
-  console.log(req.body.data)
-  console.log(req.body.data.id, req.body.data.name)
-  await SocialModel.findOrCreate(
-    {
-      username: req.body.data.name,
-      email: req.body.data.email,
-      hash: req.body.data.id
-    },
-    function (err, user) {
-      if (err) {
-        console.log(err)
-      } else {
-        console.log(user)
+  try {
+    console.log(req.body.data)
+    console.log(req.body.data.id, req.body.data.name)
+
+    // Using await with findOneAndUpdate
+    const [user, created] = await SocialModel.findOneAndUpdate(
+      { hash: req.body.data.id },
+      {
+        $setOnInsert: {
+          username: req.body.data.name,
+          email: req.body.data.email
+        }
+      },
+      { upsert: true, new: true }
+    )
+
+    console.log(user)
+
+    const exist = await SocialModel.findOne({ username: req.body.data.name })
+    console.log(exist)
+
+    const payload = {
+      user: {
+        id: exist.id
       }
     }
-  )
-  let exist = await SocialModel.findOne({ username: req.body.data.name })
-  console.log(exist)
-  let payload = {
-    user: {
-      id: exist.id
-    }
+
+    // Using await with jwt.sign
+    const token = await jwt.sign(payload, 'jwtsecret', { expiresIn: 3600000 })
+
+    res.json(token)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-  await jwt.sign(payload, 'jwtsecret', { expiresIn: 3600000 }, (err, token) => {
-    if (err) throw err
-    return res.json(token)
-  })
 })
 app.post('/setgoogletoken', async (req, res) => {
-  console.log(req.body)
-  console.log(req.body.data.access_token, req.body.data.name)
-  await SocialModel.findOrCreate(
-    {
-      username: req.body.data.name,
-      email: req.body.data.name + '@gmail.com',
-      hash: req.body.data.access_token
-    },
-    function (err, user) {
-      if (err) {
-        console.log(err)
-      } else {
-        console.log(user)
+  try {
+    await dbon()
+    console.log(req.body)
+    console.log(req.body.data.access_token, req.body.data.name)
+
+    // Using await with findOne
+    let exist = await SocialModel.findOne({ username: req.body.data.name })
+    console.log(exist)
+
+    if (!exist) {
+      // If the user doesn't exist, create a new one
+      exist = await SocialModel.create({
+        username: req.body.data.name,
+        email: `${req.body.data.name}@gmail.com`,
+        hash: req.body.data.access_token
+      })
+    }
+
+    const payload = {
+      user: {
+        id: exist.id
       }
     }
-  )
-  let exist = await SocialModel.findOne({ username: req.body.data.name })
-  console.log(exist)
-  let payload = {
-    user: {
-      id: exist.id
-    }
+
+    // Using await with jwt.sign
+    const token = await jwt.sign(payload, 'jwtsecret', { expiresIn: 3600000 })
+
+    res.json(token)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-  await jwt.sign(payload, 'jwtsecret', { expiresIn: 3600000 }, (err, token) => {
-    if (err) throw err
-    return res.json(token)
-  })
 })
+
 module.exports = app
