@@ -6,15 +6,12 @@ router.get('/thumbnail', async (req, res) => {
   try {
     await dbon()
     const videoid = req.query.videoid
-    const image = await Videometa.findOne(
-      { videoid: videoid },
-      { thumbnail: 1 }
-    )
+    const image = await Videometa.findOne({ videoid: videoid })
     if (!image) {
       return res.status(404).json({ error: 'Image not found' })
     }
     res.setHeader('Content-Type', 'image/png') //  For Image
-    res.send(image)
+    res.send(image.thumbnail)
   } catch (error) {
     res.status(500).json(error)
   } finally {
