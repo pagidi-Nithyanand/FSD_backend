@@ -14,8 +14,6 @@ router.get('/thumbnail', async (req, res) => {
     res.send(image.thumbnail)
   } catch (error) {
     res.status(500).json(error)
-  } finally {
-    dboff()
   }
 })
 router.get('/search', async (req, res) => {
@@ -24,7 +22,6 @@ router.get('/search', async (req, res) => {
     const parse = req.query.text
     Videometa.createIndexes([{ title: 'text' }])
     const video = await Videometa.find({ $text: { $search: parse } })
-    // console.log(video)
     if (!video) {
       return res.status(404).json({ error: 'Video not found' })
     }
@@ -32,8 +29,32 @@ router.get('/search', async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(500).json(error)
-  } finally {
-    dboff()
+  }
+})
+router.post('/vote', async (req, res) => {
+  try {
+    await dbon()
+    const voteid = Number(req.body.vote)
+    if (voteid === 1) {
+      const vote = await Videometa.findOneAndUpdate(
+        { videoid: id },
+        { $inc: { upvotes: 1 } },
+        { new: true }
+      )
+    } else {
+      const vote = await Videometa.findOneAndUpdate(
+        { videoid: id },
+        { $inc: { downvotes: 1 } },
+        { new: true }
+      )
+    }
+    if (!video) {
+      return res.status(404).json({ error: 'Video not found' })
+    }
+    res.send(video)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
   }
 })
 module.exports = router

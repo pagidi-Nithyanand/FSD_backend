@@ -27,8 +27,6 @@ router.post('/post', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json(error)
-  } finally {
-    dboff()
   }
 })
 router.get('/view', async (req, res) => {
@@ -42,8 +40,6 @@ router.get('/view', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json(error)
-  } finally {
-    dboff()
   }
 })
 module.exports = router

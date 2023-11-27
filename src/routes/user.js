@@ -39,11 +39,8 @@ router.post('/getGeneratedName', async (req, res) => {
   } catch (error) {
     console.log(error)
     res.json(error)
-  } finally {
-    dboff()
   }
 })
-
 // router.post('/Signup', upload.single('image'), async (req, res) => {
 //   // TODO: signup api
 //   await dbon()
