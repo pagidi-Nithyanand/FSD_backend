@@ -1,14 +1,12 @@
 const express = require('express')
 const RegisterModel = require('../models/UserModel')
-const { Password } = require('@mui/icons-material')
+const { dbon } = require('../db')
 const app = express()
-
 app.post('/register', async (req, res) => {
-  console.log(req.body)
   try {
+    await dbon()
     const { username, email, password } = req.body
     let exist = await RegisterModel.findOne({ email: email })
-    console.log(password, req.body)
     if (exist) {
       return res.status(400).send('User already exists')
     } else {
@@ -17,7 +15,6 @@ app.post('/register', async (req, res) => {
         hash: password,
         email: email
       })
-
       await newUser.save()
       return res.status(200).send('Registered Successfully')
     }
@@ -26,5 +23,4 @@ app.post('/register', async (req, res) => {
     return res.status(500).send('Internal server error')
   }
 })
-
 module.exports = app

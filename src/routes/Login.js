@@ -4,10 +4,7 @@ const jwt = require('jsonwebtoken')
 app = express()
 app.post('/login', async (req, res) => {
   try {
-    const { username, hash } = req.body
-    console.log(req.body)
     let exist = await UserModel.findOne({ username: req.body.username })
-    console.log(exist)
     if (!exist) {
       res.send("user doesn't exist")
     } else {
