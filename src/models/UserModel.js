@@ -7,5 +7,4 @@ const userSchema = new mongoose.Schema({
 })
 userSchema.plugin(findOrCreate)
 const UserModel = mongoose.model('User', userSchema)
-
 module.exports = UserModel

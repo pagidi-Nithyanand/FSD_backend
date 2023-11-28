@@ -1,10 +1,7 @@
 const express = require('express')
-const { dbon, dboff } = require('../db')
+const { dbon } = require('../db')
 const unique = require('unique-names-generator')
 const User = require('../models/UserModel')
-const multer = require('multer')
-const storages = multer.memoryStorage() // Store the file in memory as a Buffer
-const upload = multer({ storage: storages })
 const router = express.Router()
 router.post('/getGeneratedName', async (req, res) => {
   const names = [
@@ -38,6 +35,16 @@ router.post('/getGeneratedName', async (req, res) => {
     }
   } catch (error) {
     console.log(error)
+    res.json(error)
+  }
+})
+router.get('/remove', async (req, res) => {
+  try {
+    await dbon()
+    const id = req.body.userid
+    const remove = await User.deleteOne({ _id: id })
+    res.json({ message: remove })
+  } catch (error) {
     res.json(error)
   }
 })
