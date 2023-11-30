@@ -41,7 +41,6 @@ app.post('/setgoogletoken', async (req, res) => {
     await dbon()
     // Using await with findOne
     let exist = await SocialModel.findOne({ username: req.body.data.name })
-    console.log(exist)
     if (!exist) {
       // If the user doesn't exist, create a new one
       exist = await SocialModel.create({

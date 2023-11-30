@@ -25,7 +25,7 @@ router.post('/history', async (req, res) => {
       videoid: req.body.videoid,
       title: details.title,
       creatorid: details.userid,
-      thumbnail: req.body.videoid
+      thumbnail: details.thumbnail
     })
     await hist.save()
     res.status(200).json({ status: true })

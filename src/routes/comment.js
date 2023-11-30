@@ -1,6 +1,6 @@
 const express = require('express')
 const Comments = require('../models/CommentModel')
-const { dbon, dboff } = require('../db')
+const { dbon } = require('../db')
 const router = express.Router()
 router.post('/post', async (req, res) => {
   try {

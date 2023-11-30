@@ -1,5 +1,5 @@
 const express = require('express')
-const { dbon, dboff } = require('../db')
+const { dbon } = require('../db')
 const router = express.Router()
 const Videometa = require('../models/VideoMetaModel')
 router.get('/thumbnail', async (req, res) => {
@@ -48,8 +48,8 @@ router.post('/vote', async (req, res) => {
         { new: true }
       )
     }
-    if (!video) {
-      return res.status(404).json({ error: 'Video not found' })
+    if (vote.length === 0) {
+      return res.status(404).json({ error: 'Video not exists' })
     }
     res.send(video)
   } catch (error) {
