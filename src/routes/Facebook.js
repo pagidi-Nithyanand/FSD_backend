@@ -6,30 +6,35 @@ const { dbon, dboff } = require('../db')
 const app = express()
 
 // Enable CORS for all routes
+const corsOptions = {
+  origin: 'http://yourfrontenddomain.com',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204
+}
+
+app.use(cors(corsOptions))
 app.use(cors())
 
 app.post('/setfbtoken', async (req, res) => {
+  console.log('facebook or google')
   try {
-    console.log(req.body.data)
+    await dbon()
+    // console.log(req.body.data)
     console.log(req.body.data.id, req.body.data.name)
 
     // Using await with findOneAndUpdate
-    const [user, created] = await SocialModel.findOneAndUpdate(
-      { hash: req.body.data.id },
-      {
-        $setOnInsert: {
-          username: req.body.data.name,
-          email: req.body.data.email
-        }
-      },
-      { upsert: true, new: true }
-    )
-
-    console.log(user)
-
-    const exist = await SocialModel.findOne({ username: req.body.data.name })
+    let exist = await SocialModel.findOne({ username: req.body.data.name })
     console.log(exist)
 
+    if (!exist) {
+      // If the user doesn't exist, create a new one
+      exist = await SocialModel.create({
+        username: req.body.data.name,
+        email: `${req.body.data.name}@gmail.com`,
+        hash: req.body.data.access_token
+      })
+    }
     const payload = {
       user: {
         id: exist.id
@@ -77,6 +82,8 @@ app.post('/setgoogletoken', async (req, res) => {
   } catch (err) {
     console.error(err)
     res.status(500).json({ error: 'Internal Server Error' })
+  } finally {
+    dboff()
   }
 })
 
