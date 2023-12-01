@@ -1,7 +1,6 @@
 const express = require('express')
 const { dbon, dboff } = require('../db')
 const cors = require('cors')
-const router = express.Router()
 router.use(cors())
 const Video = require('../models/VideoMetaModel')
 const History = require('../models/HistoryModel')

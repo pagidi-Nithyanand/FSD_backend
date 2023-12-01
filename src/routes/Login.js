@@ -9,14 +9,13 @@ app.post('/login', async (req, res) => {
   try {
     await dbon()
     const { username, hash } = req.body
-    console.log(req.body)
     let exist = await UserModel.findOne({ username: req.body.username })
     if (!exist) {
       await res.send("user doesn't exist")
     } else {
       if (exist.hash === req.body.password) {
         console.log(exist.id)
-        let payload = {
+        const payload = {
           user: {
             id: exist.id
           }

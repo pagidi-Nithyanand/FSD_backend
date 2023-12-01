@@ -2,7 +2,7 @@ const SocialModel = require('../models/UserModel')
 const jwt = require('jsonwebtoken')
 const express = require('express')
 const cors = require('cors')
-const { dbon, dboff } = require('../db')
+const { dbon } = require('../db')
 const app = express()
 
 // Enable CORS for all routes
@@ -25,8 +25,6 @@ app.post('/setfbtoken', async (req, res) => {
 
     // Using await with findOneAndUpdate
     let exist = await SocialModel.findOne({ username: req.body.data.name })
-    console.log(exist)
-
     if (!exist) {
       // If the user doesn't exist, create a new one
       exist = await SocialModel.create({

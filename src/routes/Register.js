@@ -6,14 +6,14 @@ app.post('/register', async (req, res) => {
   try {
     await dbon()
     const { username, email, password } = req.body
-    let exist = await RegisterModel.findOne({ email: email })
+    const exist = await RegisterModel.findOne({ email })
     if (exist) {
       return res.status(400).send('User already exists')
     } else {
-      let newUser = new RegisterModel({
-        username: username,
+      const newUser = new RegisterModel({
+        username,
         hash: password,
-        email: email
+        email
       })
       await newUser.save()
       return res.status(200).send('Registered Successfully')

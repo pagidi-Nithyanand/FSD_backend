@@ -9,7 +9,7 @@ router.get('/thumbnail', async (req, res) => {
   try {
     await dbon()
     const videoid = req.query.videoid
-    const image = await Videometa.findOne({ videoid: videoid })
+    const image = await Videometa.findOne({ videoid })
     if (!image) {
       return res.status(404).json({ error: 'Image not found' })
     }
@@ -38,15 +38,17 @@ router.get('/search', async (req, res) => {
 router.post('/vote', async (req, res) => {
   try {
     await dbon()
+    let vote
+    const id=req.body.videoid
     const voteid = Number(req.body.vote)
     if (voteid === 1) {
-      const vote = await Videometa.findOneAndUpdate(
+      vote = await Videometa.findOneAndUpdate(
         { videoid: id },
         { $inc: { upvotes: 1 } },
         { new: true }
       )
     } else {
-      const vote = await Videometa.findOneAndUpdate(
+      vote = await Videometa.findOneAndUpdate(
         { videoid: id },
         { $inc: { downvotes: 1 } },
         { new: true }
@@ -55,7 +57,7 @@ router.post('/vote', async (req, res) => {
     if (vote.length === 0) {
       return res.status(404).json({ error: 'Video not exists' })
     }
-    res.send(video)
+    res.send(vote)
   } catch (error) {
     console.log(error)
     res.status(500).json(error)

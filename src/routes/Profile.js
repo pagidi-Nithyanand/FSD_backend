@@ -7,8 +7,7 @@ app.get('/Profile', middleware, async (req, res) => {
   try {
     //console.log('2')
     await dbon()
-    //console.log('profile')
-    let exist = await UserModel.findById(req.user.id)
+    const exist = await UserModel.findById(req.user.id)
     if (!exist) {
       return await res.status(400).send('User not found')
     }
