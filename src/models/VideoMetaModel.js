@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const videoMetadataSchema = new mongoose.Schema({
-  userid: String,
+  username: String,
   videoid: String,
   title: String,
   thumbnail: Buffer,
