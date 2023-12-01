@@ -1,12 +1,17 @@
 const express = require('express')
 const UserModel = require('../models/UserModel')
 const jwt = require('jsonwebtoken')
-const app = express()
+const { dboff } = require('../db')
+app = express()
+const cors = require('cors')
+app.use(cors())
 app.post('/login', async (req, res) => {
   try {
-    const exist = await UserModel.findOne({ username: req.body.username })
+    await dbon()
+    const { username, hash } = req.body
+    let exist = await UserModel.findOne({ username: req.body.username })
     if (!exist) {
-      res.send("user doesn't exist")
+      await res.send("user doesn't exist")
     } else {
       if (exist.hash === req.body.password) {
         console.log(exist.id)
@@ -19,18 +24,20 @@ app.post('/login', async (req, res) => {
           payload,
           'jwtsecret',
           { expiresIn: 3600000 },
-          (err, token) => {
+          async (err, token) => {
             if (err) throw err
-            return res.json(token)
+            return await res.json(token)
           }
         )
       } else {
-        res.send('incorrect password')
+        await res.send('incorrect password')
       }
     }
   } catch (err) {
     console.log(err)
-    res.send('Server Error')
+    await res.send('Server Error')
+  } finally {
+    dboff()
   }
 })
 module.exports = app

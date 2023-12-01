@@ -19,7 +19,7 @@ app.post('/register', async (req, res) => {
       return res.status(200).send('Registered Successfully')
     }
   } catch (err) {
-    console.log(err)
+    //console.log(err)
     return res.status(500).send('Internal server error')
   }
 })
