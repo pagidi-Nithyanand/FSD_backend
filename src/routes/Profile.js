@@ -6,7 +6,7 @@ const { dbon } = require('../db')
 app.get('/Profile', middleware, async (req, res) => {
   try {
     await dbon()
-    let exist = await UserModel.findById(req.user.id)
+    const exist = await UserModel.findById(req.user.id)
     if (!exist) {
       return res.status(400).send('User not found')
     }

@@ -2,7 +2,7 @@ const SocialModel = require('../models/UserModel')
 const jwt = require('jsonwebtoken')
 const express = require('express')
 const cors = require('cors')
-const { dbon, dboff } = require('../db')
+const { dbon } = require('../db')
 const app = express()
 
 // Enable CORS for all routes
@@ -12,7 +12,7 @@ app.post('/setfbtoken', async (req, res) => {
   try {
     await dbon()
     // Using await with findOneAndUpdate
-    const [user, created] = await SocialModel.findOneAndUpdate(
+    await SocialModel.findOneAndUpdate(
       { hash: req.body.data.id },
       {
         $setOnInsert: {

@@ -14,6 +14,7 @@ const upload = multer({ storage: storages })
 router.post('/upload', upload.any(), async (req, res) => {
   try {
     await dbon()
+    let newvideo;
     if (req.body.videoSource === 'local') {
       newvideo = await new Videodata({
         userid: req.body.data1,
