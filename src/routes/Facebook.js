@@ -17,12 +17,8 @@ app.use(cors(corsOptions))
 app.use(cors())
 
 app.post('/setfbtoken', async (req, res) => {
-  console.log('facebook or google')
   try {
     await dbon()
-    // console.log(req.body.data)
-    console.log(req.body.data.id, req.body.data.name)
-
     // Using await with findOneAndUpdate
     let exist = await SocialModel.findOne({ username: req.body.data.name })
     if (!exist) {
@@ -70,8 +66,6 @@ app.post('/setgoogletoken', async (req, res) => {
   } catch (err) {
     console.error(err)
     res.status(500).json({ error: 'Internal Server Error' })
-  } finally {
-    dboff()
   }
 })
 

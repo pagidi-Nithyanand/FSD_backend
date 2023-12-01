@@ -1,20 +1,19 @@
 const express = require('express')
 const UserModel = require('../models/UserModel')
 const jwt = require('jsonwebtoken')
-const { dboff } = require('../db')
-app = express()
+const { dbon } = require('../db')
+const app = express.Router()
 const cors = require('cors')
 app.use(cors())
 app.post('/login', async (req, res) => {
   try {
     await dbon()
-    const { username, hash } = req.body
-    let exist = await UserModel.findOne({ username: req.body.username })
+    // const { username, hash } = req.body
+    const exist = await UserModel.findOne({ username: req.body.username })
     if (!exist) {
       await res.send("user doesn't exist")
     } else {
       if (exist.hash === req.body.password) {
-        console.log(exist.id)
         const payload = {
           user: {
             id: exist.id
@@ -34,10 +33,7 @@ app.post('/login', async (req, res) => {
       }
     }
   } catch (err) {
-    console.log(err)
     await res.send('Server Error')
-  } finally {
-    dboff()
   }
 })
 module.exports = app

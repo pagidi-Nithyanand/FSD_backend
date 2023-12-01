@@ -7,8 +7,6 @@ const profile = require('../models/UserModel')
 router.use(cors())
 
 router.post('/', async (req, res) => {
-  console.log('Hi iam comments')
-  console.log(req.body)
   try {
     if (req.body.title === null) {
       return
@@ -18,8 +16,6 @@ router.post('/', async (req, res) => {
       videoid: req.body.videoid
     })
     const user = await profile.findOne({ _id: req.body.userid })
-    console.log(user)
-    console.log(existingComment)
     if (!existingComment) {
       const newcomment = new Comments({
         userid: req.body.userid,
@@ -33,9 +29,7 @@ router.post('/', async (req, res) => {
         Downvotes: 0,
         Timestamp: new Date().toUTCString()
       })
-      console.log(newcomment)
       await newcomment.save()
-      console.log('done')
       res.status(201).json({ boolean: true })
     } else {
       res.status(201).json({ boolean: false })
@@ -45,12 +39,9 @@ router.post('/', async (req, res) => {
   }
 })
 router.get('/', async (req, res) => {
-  console.log('Reading Comments')
-  console.log(req.query)
   try {
     await dbon()
     const existingComment = await Comments.find({ videoid: req.query.videoid })
-    console.log(existingComment)
     if (existingComment.length === 0) {
       res.status(201).json({ comments: 'No Comments' })
     } else {

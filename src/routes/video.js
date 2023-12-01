@@ -13,11 +13,10 @@ const upload = multer({ storage: storages })
 router.post('/upload', upload.any(), async (req, res) => {
   try {
     await dbon()
-    let newvideo;
+    let newvideo
     if (req.body.videoSource === 'local') {
       newvideo = await new Videodata({
         userid: req.body.data1,
-        data: req.files[1].buffer
         data: req.files[1].buffer
       })
     } else {
@@ -28,13 +27,11 @@ router.post('/upload', upload.any(), async (req, res) => {
     }
     await newvideo.save()
     const temp = await Videodata.findOne({ data: req.files[1].buffer })
-    // //console.log(temp)
     const videometa = new Videometa({
       username: req.body.data1,
       videoid: temp._id,
       title: req.body.title,
       description: req.body.description,
-      thumbnail: req.files[0].buffer,
       thumbnail: req.files[0].buffer,
       video_tags: req.body.video_tags,
       timestamp: new Date(),
@@ -46,15 +43,12 @@ router.post('/upload', upload.any(), async (req, res) => {
     await videometa.save()
     res.status(201).json({ message: 'Video uploaded successfully' })
   } catch (error) {
-    //console.log(error)
     res.status(500).json(error)
   }
-  ;``
 })
 router.get('/stream', async (req, res) => {
   try {
     await dbon()
-    //console.log(req.query.videoId)
     const id = req.query.videoId
     const video = await Videodata.findOne({ _id: id })
     const videodata = video.data | video.url
@@ -64,13 +58,10 @@ router.get('/stream', async (req, res) => {
     res.setHeader('Content-Type', 'video/mp4') // For Video
     res.send(videodata)
   } catch (error) {
-    //console.log(error)
     res.status(500).json(error)
   }
 })
 router.get('/meta', async (req, res) => {
-  console.log('meta called')
-  console.log(req.query)
   try {
     await dbon()
     const videoId = req.query.videoid
@@ -80,14 +71,11 @@ router.get('/meta', async (req, res) => {
     }
     res.status(500).json(videometa.description)
   } catch (error) {
-    console.log(error)
     res.status(500).json(error)
   }
 })
 router.get('/allmeta', async (req, res) => {
-  console.log(2)
   try {
-    //console.log('MetaData')
     await dbon()
     // Increase the timeout for the MongoDB operation to 30 seconds
     const videometa = await Videometa.find({}).maxTimeMS(30000)
@@ -96,7 +84,6 @@ router.get('/allmeta', async (req, res) => {
     }
     res.status(200).json(videometa)
   } catch (error) {
-    //console.log(error)
     res.status(500).json({ error: 'Internal Server Error' })
   }
 })
@@ -117,7 +104,6 @@ router.get('/allmeta', async (req, res) => {
 //       res.status(500).json({ error: 'Error streaming video', details: error })
 //     })
 //   } catch (error1) {
-//     //console.log(error1)
 //     res.status(500).json({ error: 'Internal Server Error', details: error1 })
 //   } finally {
 //     dboff()

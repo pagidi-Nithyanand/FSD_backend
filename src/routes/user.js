@@ -3,6 +3,7 @@ const { dbon } = require('../db')
 const unique = require('unique-names-generator')
 const User = require('../models/UserModel')
 const router = express.Router()
+const cors = require('cors')
 router.use(cors())
 router.get('/getGeneratedName', async (req, res) => {
   const names = [
@@ -14,7 +15,6 @@ router.get('/getGeneratedName', async (req, res) => {
     unique.starWars
   ]
   const limit = 100
-  console.log('Good')
   try {
     await dbon()
     let responseSent = false
@@ -34,7 +34,6 @@ router.get('/getGeneratedName', async (req, res) => {
         const existingUser = await User.findOne({ username: name })
 
         if (name.length < 32 && name.length > 7 && !existingUser) {
-          console.log(name)
           res.json({ username: name })
           responseSent = true
           break
@@ -42,7 +41,6 @@ router.get('/getGeneratedName', async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error)
     res.json(error)
   }
 })
